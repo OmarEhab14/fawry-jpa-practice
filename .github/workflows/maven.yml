@@ -10,9 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-
     steps:
       - uses: actions/checkout@v4
 
@@ -25,6 +22,3 @@ jobs:
 
       - name: Build with Maven (skip tests)
         run: mvn package -Dmaven.test.skip=true
-
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@v4
