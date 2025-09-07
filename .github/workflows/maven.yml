@@ -28,3 +28,17 @@ jobs:
         with:
           name: artifact
           path: /home/runner/work/fawry-jpa-practice/fawry-jpa-practice/target/spring-data-jpa-practice-0.0.1-SNAPSHOT.jar
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fawry-spring:latest
