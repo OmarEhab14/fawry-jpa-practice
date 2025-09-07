@@ -22,3 +22,9 @@ jobs:
 
       - name: Build with Maven (skip tests)
         run: mvn package -Dmaven.test.skip=true
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact
+          path: /home/runner/work/fawry-jpa-practice/fawry-jpa-practice/target/spring-data-jpa-practice-0.0.1-SNAPSHOT.jar
