@@ -1,8 +1,14 @@
 package org.example.springdatajpapractice.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.example.springdatajpapractice.DTOs.PagedResponse;
 import org.example.springdatajpapractice.entity.Employee;
 import org.example.springdatajpapractice.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +44,23 @@ public class EmployeeController {
     }
 
     @GetMapping("")
-    public Iterable<Employee> findAll() {
-        return employeeService.getAllEmployees();
+    public ResponseEntity<PagedResponse<Employee>> findAll(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "8") int pageSize,
+                                      @RequestParam(defaultValue = "id,asc") String[] sort,
+                                      HttpServletRequest request) {
+
+        Sort.Direction direction = sort[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, sort[0]));
+
+        String baseUrl = request.getRequestURL().toString();
+        Page<Employee> employeePage = employeeService.getAllEmployees(pageable);
+
+        String nextPageUrl = employeePage.hasNext() ?  baseUrl + "?page=" + (page + 1) + "&pageSize=" + pageable.getPageSize() + "&sort=" + sort[0] + "," + sort[1] : null;
+        String prevPageUrl = employeePage.hasPrevious() ? baseUrl + "?page=" + (page - 1) + "&pageSize=" + pageable.getPageSize() + "&sort=" + sort[0] + "," + sort[1] : null;
+
+        PagedResponse<Employee> response = new PagedResponse<>(employeePage.getContent(), page, pageSize, nextPageUrl, prevPageUrl);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("")

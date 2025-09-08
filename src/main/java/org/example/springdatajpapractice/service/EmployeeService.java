@@ -3,6 +3,8 @@ package org.example.springdatajpapractice.service;
 import org.example.springdatajpapractice.repository.DepartmentRepo;
 import org.example.springdatajpapractice.repository.EmployeeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.example.springdatajpapractice.entity.Employee;
 
@@ -24,8 +26,8 @@ public class EmployeeService {
         return employeeRepo.findById(id).orElse(null);
     }
 
-    public Iterable<Employee> getAllEmployees() {
-        return employeeRepo.findAll();
+    public Page<Employee> getAllEmployees(Pageable pageable) {
+        return employeeRepo.findAll(pageable);
     }
 
     public List<Employee>  findByName(String name) {
